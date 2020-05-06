@@ -8,7 +8,7 @@ Install
 
 .. code-block:: console
 
-    > pip install pipes
+    > pip install python-pipes
 
 How to use
 ----------
