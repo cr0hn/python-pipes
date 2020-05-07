@@ -18,7 +18,7 @@ def read_stdin_lines(read_timeout: int = 0) -> Iterable[str]:
     is_stdin_pipe = not sys.stdin.isatty()
 
     # If stdin is a pipe -> increment reading time
-    if is_stdin_pipe:
+    if read_timeout == 0 and is_stdin_pipe:
         read_timeout = 100
 
     # -------------------------------------------------------------------------
