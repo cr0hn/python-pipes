@@ -17,20 +17,27 @@ def read_stdin_lines(read_timeout: int = 0) -> Iterable[str]:
     is_stdout_pipe = not sys.stdout.isatty()
     is_stdin_pipe = not sys.stdin.isatty()
 
-    # If stdin is a pipe -> increment reading time
-    if read_timeout == 0 and is_stdin_pipe:
-        read_timeout = 100
-
     # -------------------------------------------------------------------------
     # Read info by stdin or parameter
     # -------------------------------------------------------------------------
-    if sys.stdin in select.select([sys.stdin], [], [], read_timeout)[0]:
+    if read_timeout:
+        if sys.stdin in select.select([sys.stdin], [], [], read_timeout)[0]:
+            for line in sys.stdin.readlines():
+                yield is_stdin_pipe, is_stdout_pipe, line
 
-        for line in sys.stdin.readlines():
-            yield is_stdin_pipe, is_stdout_pipe, line
+        else:
+            yield is_stdin_pipe, is_stdout_pipe, None
 
     else:
-        yield is_stdin_pipe, is_stdout_pipe, None
+
+        while 1:
+
+            line = sys.stdin.readline()
+
+            if not line:
+                return
+
+            yield is_stdin_pipe, is_stdout_pipe, line
 
 
 __all__ = ("read_stdin_lines",)
